@@ -2,13 +2,13 @@ package utils
 
 import "fmt"
 
-type AirbnbData struct {
+type TaxData struct {
 	GrossEarnings float64
 	Nights        int
 	Aatax         float64
 }
 
-func ShowOutput(records [][]string, airbnbTaxData AirbnbData) {
+func ShowOutput(records [][]string, airbnbTaxData TaxData) {
 
 	fmt.Println("\t\t\t Airbnb GE: \t # Nights: \t AATax:")
 	for x := range records {
