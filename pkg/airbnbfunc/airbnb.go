@@ -1,18 +1,49 @@
 package airbnbfunc
 
 import (
+	"encoding/csv"
 	"fmt"
+	"log"
+	"os"
 	"strconv"
+
+	"github.com/rwsweeney/aac-str-tax-calculator/pkg/utils"
 )
 
+// Calculates the GrossEarnings, number of nights, and Anne Arrundel Occupancy Tax for Airbnb
+func CalculateAirbnb() (airbnbTax utils.TaxData) {
+	// Process Airbnb data
+	airbnbFile, err := os.Open("airbnb_tax_return.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer airbnbFile.Close()
+
+	airbnbReader := csv.NewReader(airbnbFile)
+	airbnbRecords, err := airbnbReader.ReadAll()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, grossEarningsColumn := utils.GetColumn("Gross Earnings", airbnbRecords)
+	_, nightsColumn := utils.GetColumn("Nights", airbnbRecords)
+
+	airbnbTaxData := utils.TaxData{
+		GrossEarnings: CalculateGrossEarnings(grossEarningsColumn, airbnbRecords),
+		Nights:        CalculateTotalNights(nightsColumn, airbnbRecords),
+		Aatax:         CalculateAATax(CalculateGrossEarnings(grossEarningsColumn, airbnbRecords)), // This runs CalculateGrossEarnings twice which is gross.
+	}
+	return airbnbTaxData
+}
+
 // This function calculates the gross earnings for AirBNB for the month
-func CalculateGrossEarnings(records [][]string) float64 {
+func CalculateGrossEarnings(column int, records [][]string) float64 {
 
 	var grossEarnings float64
 
 	for x := range records {
 		if x != 0 {
-			singleEarning, error := strconv.ParseFloat(records[x][14], 64)
+			singleEarning, error := strconv.ParseFloat(records[x][column], 64)
 			grossEarnings += singleEarning
 			if error != nil {
 				fmt.Println(error)
@@ -31,13 +62,13 @@ func CalculateAATax(grossEarnings float64) float64 {
 	return aaTax
 }
 
-func CalculateTotalNights(records [][]string) int {
+func CalculateTotalNights(column int, records [][]string) int {
 
 	var totalNights int
 
 	for x := range records {
 		if x != 0 {
-			singleNight, error := strconv.Atoi(records[x][4])
+			singleNight, error := strconv.Atoi(records[x][column])
 			totalNights += singleNight
 			if error != nil {
 				fmt.Println(error)
@@ -46,18 +77,4 @@ func CalculateTotalNights(records [][]string) int {
 		}
 	}
 	return totalNights
-}
-
-// This function iterates over the CSV file to find the Gross Earnings row and column position.
-func Get_earnings_column(records [][]string) (row, column int) {
-	for x, y := range records {
-		for a := 0; a < len(y); a++ {
-			if records[x][a] == "Gross Earnings" {
-				row := x
-				column := a
-				return row, column
-			}
-		}
-	}
-	return row, column
 }

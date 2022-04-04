@@ -8,6 +8,20 @@ type TaxData struct {
 	Aatax         float64
 }
 
+// This function iterates over the CSV file to find the Gross Earnings row and column position.
+func GetColumn(name string, records [][]string) (row, column int) {
+	for x, y := range records {
+		for a := 0; a < len(y); a++ {
+			if records[x][a] == name {
+				row := x
+				column := a
+				return row, column
+			}
+		}
+	}
+	return row, column
+}
+
 func ShowOutput(records [][]string, airbnbTaxData TaxData) {
 
 	fmt.Println("\t\t\t Airbnb GE: \t # Nights: \t AATax:")
