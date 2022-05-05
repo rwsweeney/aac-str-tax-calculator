@@ -11,9 +11,9 @@ import (
 )
 
 // Calculates the GrossEarnings, number of nights, and Anne Arrundel Occupancy Tax for Airbnb
-func CalculateAirbnb() (airbnbTax utils.TaxData) {
+func CalculateAirbnb(file string) (airbnbTax utils.TaxData) {
 	// Process Airbnb data
-	airbnbFile, err := os.Open("airbnb_tax_return.csv")
+	airbnbFile, err := os.Open(file)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,12 +45,14 @@ func CalculateGrossEarnings(column int, records [][]string) float64 {
 		if x != 0 {
 			singleEarning, error := strconv.ParseFloat(records[x][column], 64)
 			grossEarnings += singleEarning
+			//fmt.Printf("CalculateGrossEarnings loop #%d\n\tvalue: %f singleField: %f\n\n", x, grossEarnings, singleEarning)
 			if error != nil {
 				fmt.Println(error)
 			}
 
 		}
 	}
+	//fmt.Println(grossEarnings)
 	return grossEarnings
 }
 
@@ -69,6 +71,7 @@ func CalculateTotalNights(column int, records [][]string) int {
 	for x := range records {
 		if x != 0 {
 			singleNight, error := strconv.Atoi(records[x][column])
+			//fmt.Println(singleNight)
 			totalNights += singleNight
 			if error != nil {
 				fmt.Println(error)

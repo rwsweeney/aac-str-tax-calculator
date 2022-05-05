@@ -2,6 +2,7 @@ package vrbofunc
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -10,9 +11,9 @@ import (
 )
 
 // Calculates the GrossEarnings, number of nights, and Anne Arrundel Occupancy Tax for VRBO
-func CalculateVRBO() (taxData utils.TaxData) {
+func CalculateVRBO(file string) (taxData utils.TaxData) {
 	// Process VRBO data
-	vrboFile, err := os.Open("test.csv")
+	vrboFile, err := os.Open(file)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -26,12 +27,14 @@ func CalculateVRBO() (taxData utils.TaxData) {
 	}
 
 	_, aaTaxColumn := utils.GetColumn("Vrbo's Taxes | Taxes sent to Vrbo", vrboRecords)
-	aaOccupancyTax, error := strconv.ParseFloat(vrboRecords[1][aaTaxColumn], 64)
+	_, jurisdictionColumn := utils.GetColumn("Jurisdiction name", vrboRecords)
+	aaOccupancyTax := CalculateGrossTaxes(aaTaxColumn, jurisdictionColumn, vrboRecords)
 	if error != nil {
 		log.Fatal(error)
 	}
 
-	vrboNights, error := strconv.Atoi(vrboRecords[1][5])
+	_, nightsColumn := utils.GetColumn("Nights", vrboRecords)
+	vrboNights := CalculateTotalNights(nightsColumn, jurisdictionColumn, vrboRecords)
 	if error != nil {
 		log.Fatal(error)
 	}
@@ -43,4 +46,51 @@ func CalculateVRBO() (taxData utils.TaxData) {
 	}
 
 	return vrboTaxData
+}
+
+/* Calculates the amount of tax paid to Anne Arrundel County for VRBO. This function takes in an int for the location
+of the tax column and the jurisdiction column along with the CSV records in order to return the Gross Taxes to AA. */
+func CalculateGrossTaxes(columnTax, columnJurisdiction int, records [][]string) float64 {
+
+	var grossTaxes float64
+
+	for x := range records {
+		if x != 0 {
+			//fmt.Println(records[x][columnJurisdiction])
+			if records[x][columnJurisdiction] != "ANNE ARUNDEL" {
+				continue
+			}
+			singlePayment, error := strconv.ParseFloat(records[x][columnTax], 64)
+			grossTaxes += singlePayment
+			//fmt.Printf("CalculateGrossEarnings loop #%d\n\tvalue: %f singleField: %f\n\n", x, grossTaxes, singlePayment)
+			if error != nil {
+				fmt.Println(error)
+			}
+
+		}
+	}
+	//fmt.Println(grossTaxes)
+	return grossTaxes
+}
+
+// Calculates the amount of tax paid to Anne Arrundel County for VRBO
+func CalculateTotalNights(columnNight, columnJurisdiction int, records [][]string) int {
+
+	var totalNights int
+
+	for x := range records {
+		if x != 0 {
+			if records[x][columnJurisdiction] != "ANNE ARUNDEL" {
+				continue
+			}
+			singleNight, error := strconv.Atoi(records[x][columnNight])
+			//fmt.Println(singleNight)
+			totalNights += singleNight
+			if error != nil {
+				fmt.Println(error)
+			}
+
+		}
+	}
+	return totalNights
 }
