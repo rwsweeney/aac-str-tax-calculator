@@ -3,9 +3,10 @@ package vrbofunc
 import (
 	"encoding/csv"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/rwsweeney/aac-str-tax-calculator/pkg/utils"
 )
@@ -34,6 +35,7 @@ func CalculateVRBO(file string) (taxData utils.TaxData) {
 	}
 
 	_, nightsColumn := utils.GetColumn("Nights", vrboRecords)
+	log.Debug("VRBO - nightsColumn: ", nightsColumn)
 	vrboNights := CalculateTotalNights(nightsColumn, jurisdictionColumn, vrboRecords)
 	if error != nil {
 		log.Fatal(error)
@@ -44,12 +46,16 @@ func CalculateVRBO(file string) (taxData utils.TaxData) {
 		Nights:        vrboNights,
 		Aatax:         aaOccupancyTax,
 	}
+	log.Debug("VRBO - vrboTaxData: ", vrboTaxData)
 
 	return vrboTaxData
 }
 
-/* Calculates the amount of tax paid to Anne Arrundel County for VRBO. This function takes in an int for the location
-of the tax column and the jurisdiction column along with the CSV records in order to return the Gross Taxes to AA. */
+/*
+	Calculates the amount of tax paid to Anne Arrundel County for VRBO. This function takes in an int for the location
+
+of the tax column and the jurisdiction column along with the CSV records in order to return the Gross Taxes to AA.
+*/
 func CalculateGrossTaxes(columnTax, columnJurisdiction int, records [][]string) float64 {
 
 	var grossTaxes float64
@@ -92,5 +98,6 @@ func CalculateTotalNights(columnNight, columnJurisdiction int, records [][]strin
 
 		}
 	}
+	log.Debug("VRBO - totalNights: ", totalNights)
 	return totalNights
 }

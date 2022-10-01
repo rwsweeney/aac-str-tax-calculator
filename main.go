@@ -10,12 +10,23 @@ import (
 
 	"github.com/rwsweeney/aac-str-tax-calculator/pkg/airbnbfunc"
 	"github.com/rwsweeney/aac-str-tax-calculator/pkg/vrbofunc"
+
+	log "github.com/sirupsen/logrus"
+
+	"os"
 )
 
 func main() {
 
-	airbnbTaxData := airbnbfunc.CalculateAirbnb("airbnb_april.csv")
-	vrboTaxData := vrbofunc.CalculateVRBO("vrbo_april.csv")
+	if os.Getenv("TAX_DEBUG") != "" {
+		log.SetLevel(log.TraceLevel)
+	} else {
+		log.Infoln("To enable bug log output, set the TAX_DEBUG environment variable to any value.")
+		log.SetLevel(log.ErrorLevel)
+	}
+
+	airbnbTaxData := airbnbfunc.CalculateAirbnb("airbnb_sept.csv")
+	vrboTaxData := vrbofunc.CalculateVRBO("vrbo_sept.csv")
 
 	fmt.Println("Nights rented on Airbnb: ", airbnbTaxData.Nights)
 	fmt.Println("Nights rented on VRBO: ", vrboTaxData.Nights)
