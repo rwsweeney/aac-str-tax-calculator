@@ -25,8 +25,8 @@ func main() {
 		log.SetLevel(log.ErrorLevel)
 	}
 
-	airbnbTaxData := airbnbfunc.CalculateAirbnb("airbnb_sept.csv")
-	vrboTaxData := vrbofunc.CalculateVRBO("vrbo_sept.csv")
+	airbnbTaxData := airbnbfunc.CalculateAirbnb("./financials/airbnb_nov.csv")
+	vrboTaxData := vrbofunc.CalculateVRBO("./financials/vrbo_nov.csv")
 
 	fmt.Println("Nights rented on Airbnb: ", airbnbTaxData.Nights)
 	fmt.Println("Nights rented on VRBO: ", vrboTaxData.Nights)
