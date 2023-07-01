@@ -1,7 +1,6 @@
 // TO DO
 // Create a function to show the work behind the calculations.
 // Airbnb: Should run a test calculation of (Gross Earnings * .06) + (Gross Earnings * .07) = occupancy tax value.
-// Let the app take in a debug flag
 
 package main
 
@@ -25,8 +24,8 @@ func main() {
 		log.SetLevel(log.ErrorLevel)
 	}
 
-	airbnbTaxData := airbnbfunc.CalculateAirbnb("./financials/airbnb_nov.csv")
-	vrboTaxData := vrbofunc.CalculateVRBO("./financials/vrbo_nov.csv")
+	airbnbTaxData := airbnbfunc.CalculateAirbnb("./csv/2023/airbnb_june.csv")
+	vrboTaxData := vrbofunc.CalculateVRBO("./csv/2023/vrbo_june.csv")
 
 	fmt.Println("Nights rented on Airbnb: ", airbnbTaxData.Nights)
 	fmt.Println("Nights rented on VRBO: ", vrboTaxData.Nights)

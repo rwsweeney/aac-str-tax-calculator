@@ -3,9 +3,10 @@ package airbnbfunc
 import (
 	"encoding/csv"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/rwsweeney/aac-str-tax-calculator/pkg/utils"
 )
@@ -24,15 +25,21 @@ func CalculateAirbnb(file string) (airbnbTax utils.TaxData) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Debug("Airbnb: CSV loaded")
 
 	_, grossEarningsColumn := utils.GetColumn("Gross Earnings", airbnbRecords)
+	log.Debug("Airbnb: grossEarnings Column acquired: ", grossEarningsColumn)
+
 	_, nightsColumn := utils.GetColumn("Nights", airbnbRecords)
+	log.Debug("Airbnb: nights Column acquired: ", nightsColumn)
 
 	airbnbTaxData := utils.TaxData{
 		GrossEarnings: CalculateGrossEarnings(grossEarningsColumn, airbnbRecords),
 		Nights:        CalculateTotalNights(nightsColumn, airbnbRecords),
 		Aatax:         CalculateAATax(CalculateGrossEarnings(grossEarningsColumn, airbnbRecords)), // This runs CalculateGrossEarnings twice which is gross.
 	}
+
+	log.Debug("Airbnb: Tax Data computed")
 	return airbnbTaxData
 }
 
@@ -45,14 +52,15 @@ func CalculateGrossEarnings(column int, records [][]string) float64 {
 		if x != 0 {
 			singleEarning, error := strconv.ParseFloat(records[x][column], 64)
 			grossEarnings += singleEarning
-			//fmt.Printf("CalculateGrossEarnings loop #%d\n\tvalue: %f singleField: %f\n\n", x, grossEarnings, singleEarning)
 			if error != nil {
 				fmt.Println(error)
 			}
 
 		}
 	}
-	//fmt.Println(grossEarnings)
+
+	log.Debug("Airbnb: grossEarnings computed")
+
 	return grossEarnings
 }
 
@@ -79,5 +87,8 @@ func CalculateTotalNights(column int, records [][]string) int {
 
 		}
 	}
+
+	log.Debug("Airbnb: totalNights computed")
+
 	return totalNights
 }

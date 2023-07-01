@@ -2,7 +2,6 @@ package vrbofunc
 
 import (
 	"encoding/csv"
-	"fmt"
 	"os"
 	"strconv"
 
@@ -68,9 +67,9 @@ func CalculateGrossTaxes(columnTax, columnJurisdiction int, records [][]string) 
 			}
 			singlePayment, error := strconv.ParseFloat(records[x][columnTax], 64)
 			grossTaxes += singlePayment
-			//fmt.Printf("CalculateGrossEarnings loop #%d\n\tvalue: %f singleField: %f\n\n", x, grossTaxes, singlePayment)
+			// fmt.Printf("CalculateGrossEarnings loop #%d\n\tvalue: %f singleField: %f\n\n", x, grossTaxes, singlePayment)
 			if error != nil {
-				fmt.Println(error)
+				log.Fatal(error)
 			}
 
 		}
@@ -93,7 +92,7 @@ func CalculateTotalNights(columnNight, columnJurisdiction int, records [][]strin
 			//fmt.Println(singleNight)
 			totalNights += singleNight
 			if error != nil {
-				fmt.Println(error)
+				log.Fatal(error)
 			}
 
 		}
