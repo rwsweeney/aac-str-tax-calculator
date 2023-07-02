@@ -25,16 +25,22 @@ func CalculateVRBO(file string) (taxData utils.TaxData) {
 	if error != nil {
 		log.Fatal(error)
 	}
+	log.Debug("VRBO: CSV loaded")
 
 	_, aaTaxColumn := utils.GetColumn("Vrbo's Taxes | Taxes sent to Vrbo", vrboRecords)
+	log.Debug("VRBO: aaTaxColumn acquired: ", aaTaxColumn)
+
 	_, jurisdictionColumn := utils.GetColumn("Jurisdiction name", vrboRecords)
+	log.Debug("VRBO: jurdistictionColumn acquired: ", jurisdictionColumn)
+
 	aaOccupancyTax := CalculateGrossTaxes(aaTaxColumn, jurisdictionColumn, vrboRecords)
 	if error != nil {
 		log.Fatal(error)
 	}
 
 	_, nightsColumn := utils.GetColumn("Nights", vrboRecords)
-	log.Debug("VRBO - nightsColumn: ", nightsColumn)
+	log.Debug("VRBO - nightsColumn acquired: ", nightsColumn)
+
 	vrboNights := CalculateTotalNights(nightsColumn, jurisdictionColumn, vrboRecords)
 	if error != nil {
 		log.Fatal(error)
@@ -45,7 +51,7 @@ func CalculateVRBO(file string) (taxData utils.TaxData) {
 		Nights:        vrboNights,
 		Aatax:         aaOccupancyTax,
 	}
-	log.Debug("VRBO - vrboTaxData: ", vrboTaxData)
+	log.Debug("VRBO - vrboTaxData computed: ", vrboTaxData)
 
 	return vrboTaxData
 }
@@ -74,7 +80,9 @@ func CalculateGrossTaxes(columnTax, columnJurisdiction int, records [][]string) 
 
 		}
 	}
-	//fmt.Println(grossTaxes)
+
+	log.Debug("VRBO: grossEarnings computed")
+
 	return grossTaxes
 }
 
@@ -97,6 +105,7 @@ func CalculateTotalNights(columnNight, columnJurisdiction int, records [][]strin
 
 		}
 	}
-	log.Debug("VRBO - totalNights: ", totalNights)
+	log.Debug("VRBO: totalNights computed: ", totalNights)
+
 	return totalNights
 }
