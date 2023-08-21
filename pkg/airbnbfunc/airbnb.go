@@ -39,7 +39,7 @@ func CalculateAirbnb(file string) (airbnbTax utils.TaxData) {
 		Aatax:         CalculateAATax(CalculateGrossEarnings(grossEarningsColumn, airbnbRecords)), // This runs CalculateGrossEarnings twice which is gross.
 	}
 
-	log.Debug("Airbnb: Tax Data computed")
+	log.Debug("Airbnb: Tax Data computed:", airbnbTaxData)
 	return airbnbTaxData
 }
 
@@ -59,7 +59,7 @@ func CalculateGrossEarnings(column int, records [][]string) float64 {
 		}
 	}
 
-	log.Debug("Airbnb: grossEarnings computed")
+	log.Debug("Airbnb: grossEarnings computed: ", grossEarnings)
 
 	return grossEarnings
 }
@@ -88,7 +88,7 @@ func CalculateTotalNights(column int, records [][]string) int {
 		}
 	}
 
-	log.Debug("Airbnb: totalNights computed")
+	log.Debug("Airbnb: totalNights computed: ", totalNights)
 
 	return totalNights
 }

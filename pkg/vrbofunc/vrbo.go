@@ -47,11 +47,12 @@ func CalculateVRBO(file string) (taxData utils.TaxData) {
 	}
 
 	vrboTaxData := utils.TaxData{
-		GrossEarnings: aaOccupancyTax / float64(0.07), // This rounds floating point value up slightly.
+		// Since we know how much tax we paid we're reversing it to figure out the grossEarnings since the CSV doesn't have it.
+		GrossEarnings: aaOccupancyTax / float64(0.08), // This rounds floating point value up slightly.
 		Nights:        vrboNights,
 		Aatax:         aaOccupancyTax,
 	}
-	log.Debug("VRBO - vrboTaxData computed: ", vrboTaxData)
+	log.Debug("VRBO - vrboTaxData computed (grossEarnings, Nights, Aatax): ", vrboTaxData)
 
 	return vrboTaxData
 }
@@ -81,7 +82,7 @@ func CalculateGrossTaxes(columnTax, columnJurisdiction int, records [][]string) 
 		}
 	}
 
-	log.Debug("VRBO: grossEarnings computed")
+	log.Debug("VRBO - grossTaxes computed: ", grossTaxes)
 
 	return grossTaxes
 }
